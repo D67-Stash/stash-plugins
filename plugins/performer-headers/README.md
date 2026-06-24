@@ -81,3 +81,27 @@ Brave
 Performer Headers was designed to be lightweight and responsive.
 
 Performance optimizations include:
+
+Smart caching of performer scene data
+Cached header generation
+SPA-aware navigation handling
+Minimal GraphQL queries
+Lazy-loaded images
+
+## Version History
+v1.0.0
+
+Initial public release.
+
+Added performer screenshot headers
+Added scene title overlays
+Added clickable scene navigation
+Added image variety improvements
+Added caching and performance optimizations
+
+## License
+
+MIT License
+
+
+Source index URL: [`https://D67-Stash.github.io/stash-plugins/main/index.yml`](https://<your-username>.github.io/<repository-name>/main/index.yml)
