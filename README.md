@@ -21,8 +21,5 @@ Source index URL: [`https://D67-Stash.github.io/stash-plugins/main/index.yml`](h
 
 ## License
 
-The default license is set to [AGPL-3.0](/LICENCE). Before publishing any plugins you can change it.
-<img width="1944" height="706" alt="Screenshot 2026-06-25 at 08 48 57" src="https://github.com/user-attachments/assets/e93f0661-9126-41d0-afd5-10728bfa16ed" />
+<img width="1921" height="697" alt="Screenshot 2026-06-25 at 08 52 27" src="https://github.com/user-attachments/assets/ffb5bb49-562a-4717-833a-900bf8f320fa" />
 
-
-<img width="1944" height="706" alt="Screenshot 2026-06-25 at 08 48 57" src="https://github.com/user-attachments/assets/bf11ed64-14ff-4616-a993-58ab696faaa4" />
