@@ -1,12 +1,38 @@
-console.log("[Performer Header] Plugin Loaded");
+/**
+ * Performer Headers
+ * Version: 1.0.0
+ * Author: D67
+ *
+ * Displays a row of random scene screenshots
+ * at the top of performer pages.
+ *
+ * Features:
+ * - Random performer screenshots
+ * - Improved image variety
+ * - Scene title overlays
+ * - Clickable scene navigation
+ * - Smart caching
+ * - Fast tab switching
+ *
+ * Compatible with:
+ * - Stash v0.31.x+
+ */
 
 (function () {
     "use strict";
 
-    const BANNER_ID = "performer-random-scenes-banner";
+    const PLUGIN_NAME = "Performer Headers";
+    const PLUGIN_VERSION = "1.0.0";
+
+    const HEADER_ID = "performer-headers";
+    const IMAGE_COUNT = 6;
+
+    console.log(
+        `[${PLUGIN_NAME} v${PLUGIN_VERSION}] Loaded`
+    );
 
     const performerCache = new Map();
-    const bannerCache = new Map();
+    const headerCache = new Map();
 
     let currentPerformerId = null;
     let buildInProgress = false;
@@ -40,6 +66,53 @@ console.log("[Performer Header] Plugin Loaded");
         }
 
         return copy;
+    }
+
+    function selectDiverseScenes(scenes, count = IMAGE_COUNT) {
+
+        const shuffled = shuffle(scenes);
+
+        const selected = [];
+        const usedTitles = new Set();
+
+        for (const scene of shuffled) {
+
+            const title = (scene.title || "")
+                .toLowerCase()
+                .trim();
+
+            if (usedTitles.has(title)) {
+                continue;
+            }
+
+            selected.push(scene);
+            usedTitles.add(title);
+
+            if (selected.length >= count) {
+                break;
+            }
+        }
+
+        // Fill remaining slots if performer has
+        // fewer unique titles than IMAGE_COUNT
+
+        if (selected.length < count) {
+
+            for (const scene of shuffled) {
+
+                if (selected.includes(scene)) {
+                    continue;
+                }
+
+                selected.push(scene);
+
+                if (selected.length >= count) {
+                    break;
+                }
+            }
+        }
+
+        return selected;
     }
 
     async function getPerformerSceneImages(performerId) {
@@ -91,27 +164,30 @@ console.log("[Performer Header] Plugin Loaded");
             return scenes;
 
         } catch (err) {
-            console.error("[Performer Header] GraphQL Error", err);
+            console.error(
+                `[${PLUGIN_NAME}] GraphQL Error`,
+                err
+            );
             return [];
         }
     }
 
-    function removeBanner() {
-        document.getElementById(BANNER_ID)?.remove();
+    function removeHeader() {
+        document.getElementById(HEADER_ID)?.remove();
     }
 
-    function createBanner(scenes) {
+    function createHeader(scenes) {
 
-        removeBanner();
+        removeHeader();
 
         if (!scenes.length) {
             return;
         }
 
-        const banner = document.createElement("div");
-        banner.id = BANNER_ID;
+        const header = document.createElement("div");
+        header.id = HEADER_ID;
 
-        banner.style.cssText = `
+        header.style.cssText = `
             width:100%;
             margin-bottom:20px;
             border-radius:10px;
@@ -120,18 +196,18 @@ console.log("[Performer Header] Plugin Loaded");
             border:1px solid rgba(255,255,255,.08);
         `;
 
-        banner.innerHTML = `
+        header.innerHTML = `
             <div id="performer-image-grid"
                  style="
                     display:grid;
-                    grid-template-columns:repeat(6,1fr);
+                    grid-template-columns:repeat(${IMAGE_COUNT},1fr);
                     gap:4px;
                     padding:4px;
                  ">
             </div>
         `;
 
-        const grid = banner.querySelector("#performer-image-grid");
+        const grid = header.querySelector("#performer-image-grid");
 
         scenes.forEach(scene => {
 
@@ -201,9 +277,9 @@ console.log("[Performer Header] Plugin Loaded");
                 overlay.style.opacity = "0";
             });
 
-            cell.addEventListener("click", (e) => {
+            cell.addEventListener("click", () => {
                 console.log(
-                    "[Performer Header] Opening scene:",
+                    `[${PLUGIN_NAME}] Opening scene:`,
                     scene.id,
                     scene.title
                 );
@@ -219,15 +295,15 @@ console.log("[Performer Header] Plugin Loaded");
 
         if (!target) {
             console.warn(
-                "[Performer Header] Could not find insertion point"
+                `[${PLUGIN_NAME}] Could not find insertion point`
             );
             return;
         }
 
-        target.prepend(banner);
+        target.prepend(header);
     }
 
-    async function buildBanner() {
+    async function buildHeader() {
 
         if (buildInProgress) {
             return;
@@ -236,11 +312,11 @@ console.log("[Performer Header] Plugin Loaded");
         const performerId = getPerformerId();
 
         if (!performerId) {
-            removeBanner();
+            removeHeader();
             return;
         }
 
-        if (document.getElementById(BANNER_ID)) {
+        if (document.getElementById(HEADER_ID)) {
             return;
         }
 
@@ -250,10 +326,10 @@ console.log("[Performer Header] Plugin Loaded");
 
             let selectedScenes;
 
-            if (bannerCache.has(performerId)) {
+            if (headerCache.has(performerId)) {
 
                 selectedScenes =
-                    bannerCache.get(performerId);
+                    headerCache.get(performerId);
 
             } else {
 
@@ -267,15 +343,18 @@ console.log("[Performer Header] Plugin Loaded");
                 }
 
                 selectedScenes =
-                    shuffle(scenes).slice(0, 6);
+                    selectDiverseScenes(
+                        scenes,
+                        IMAGE_COUNT
+                    );
 
-                bannerCache.set(
+                headerCache.set(
                     performerId,
                     selectedScenes
                 );
             }
 
-            createBanner(selectedScenes);
+            createHeader(selectedScenes);
 
         } finally {
             buildInProgress = false;
@@ -288,7 +367,7 @@ console.log("[Performer Header] Plugin Loaded");
 
         if (!performerId) {
             currentPerformerId = null;
-            removeBanner();
+            removeHeader();
             return;
         }
 
@@ -298,9 +377,9 @@ console.log("[Performer Header] Plugin Loaded");
 
         currentPerformerId = performerId;
 
-        removeBanner();
+        removeHeader();
 
-        setTimeout(buildBanner, 300);
+        setTimeout(buildHeader, 300);
     }
 
     const observer = new MutationObserver(() => {
