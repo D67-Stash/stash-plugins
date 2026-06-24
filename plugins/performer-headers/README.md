@@ -1,12 +1,10 @@
-# D67 Stash Plugins
-
-## Performer Headers
+# Performer Headers
 
 Enhance your Stash performer pages with a dynamic header showcasing random screenshots from the performer's scenes.
 
 Performer Headers adds a visually rich image strip to the top of every performer page, helping you quickly browse a performer's content without having to scroll through scene lists.
 
-# Features
+## Features
 
 ✅ Displays a curated row of random scene screenshots on performer pages
 
