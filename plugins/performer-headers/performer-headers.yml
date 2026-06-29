@@ -1,7 +1,12 @@
-name: Performer Header Banner
-description: Displays a row of random scene screenshots at the top of performer pages.
-version: 1.0.0
-
+name: Performer Headers
+description: Displays a row of scene screenshots at the top of performer pages.
+version: 1.1.0
+url: ""
 ui:
   javascript:
     - performer-headers.js
+settings:
+  sortOrder:
+    displayName: Image Order
+    description: "Controls which scenes appear in the header. Options: random, newest, date"
+    type: STRING
